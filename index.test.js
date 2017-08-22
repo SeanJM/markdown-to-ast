@@ -78,7 +78,7 @@ tinytest(function (test, load) {
       }];
     });
 
-  test("emphasis")
+  test("Emphasis")
     .this(function () {
       return md("A *line*");
     })
@@ -90,7 +90,19 @@ tinytest(function (test, load) {
       }];
     });
 
-  test("strikethrough")
+  test("Emphasis (Incorrect)")
+    .this(function () {
+      return md("A *line");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: ["A *line"]
+      }];
+    });
+
+  test("Strikethrough")
     .this(function () {
       return md("A ~~strikethrough~~");
     })
@@ -99,6 +111,18 @@ tinytest(function (test, load) {
         type: "p",
         depth: 0,
         children: ["A ", { type: "strikethrough", children: [ "strikethrough" ] }]
+      }];
+    });
+
+  test("Strikethrough (Incorrect)")
+    .this(function () {
+      return md("A ~~strikethrough");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: ["A ~~strikethrough"]
       }];
     });
 
@@ -118,6 +142,18 @@ tinytest(function (test, load) {
           },
           " text line"
         ]
+      }];
+    });
+
+  test("strikethrough complex (Incorrect)")
+    .this(function () {
+      return md("A ~~strikethrough~ text line");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: ["A ~~strikethrough~ text line"]
       }];
     });
 
@@ -183,6 +219,86 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("Unordered List (*)")
+    .this(function () {
+      return md("* list item\n* list item 2\n  * list item 2: 1\n  * list item 2: 2\n* list item 3");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "ul",
+        depth: 0,
+        children: [
+          {
+            type: "li",
+            depth: 1,
+            children: ["list item"]
+          }, {
+            type: "li",
+            depth: 1,
+            children: [
+              "list item 2", {
+                type: "ul",
+                depth: 2,
+                children: [{
+                  type: "li",
+                  depth: 3,
+                  children: ["list item 2: 1"]
+                }, {
+                  type: "li",
+                  depth: 3,
+                  children: ["list item 2: 2"]
+                }]
+              }
+            ]
+          }, {
+            type: "li",
+            depth: 1,
+            children: ["list item 3"]
+          }
+        ]
+      }];
+    });
+
+  test("Unordered List (+)")
+    .this(function () {
+      return md("+ list item\n+ list item 2\n  + list item 2: 1\n  + list item 2: 2\n+ list item 3");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "ul",
+        depth: 0,
+        children: [
+          {
+            type: "li",
+            depth: 1,
+            children: ["list item"]
+          }, {
+            type: "li",
+            depth: 1,
+            children: [
+              "list item 2", {
+                type: "ul",
+                depth: 2,
+                children: [{
+                  type: "li",
+                  depth: 3,
+                  children: ["list item 2: 1"]
+                }, {
+                  type: "li",
+                  depth: 3,
+                  children: ["list item 2: 2"]
+                }]
+              }
+            ]
+          }, {
+            type: "li",
+            depth: 1,
+            children: ["list item 3"]
+          }
+        ]
+      }];
+    });
+
   test("Ordered list")
     .this(function () {
       return md("1. Ordered list item\n2. Ordered list item\n");
@@ -200,6 +316,125 @@ tinytest(function (test, load) {
           depth: 1,
           children: ["Ordered list item"]
         }]
+      }];
+    });
+
+  test("Ordered list (Nested)")
+    .this(function () {
+      return md("1. Ordered list item\n2. Ordered list item\n  1. Ordered list item");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "ol",
+        depth: 0,
+        children: [{
+          type: "li",
+          depth: 1,
+          children: ["Ordered list item"]
+        }, {
+          type: "li",
+          depth: 1,
+          children: ["Ordered list item", {
+            type: "ol",
+            depth: 2,
+            children: [{
+              type: "li",
+              depth: 3,
+              children: ["Ordered list item"]
+            }]
+          }]
+        }]
+      }];
+    });
+
+  test("Quote")
+    .this(function () {
+      return md("> This is a block quote");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "quote",
+        depth: 0,
+        children: ["This is a block quote"]
+      }];
+    });
+
+  test("Quote multiline")
+    .this(function () {
+      return md("> This is a block quote\n> This line is part of the original quote");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "quote",
+        depth: 0,
+        children: [
+          "This is a block quote",
+          "This line is part of the original quote"
+        ]
+      }];
+    });
+
+  test("Horizontal rule")
+    .this(function () {
+      return md("___\n***\n---");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "hr",
+        depth: 0,
+        children: []
+      }, {
+        type: "hr",
+        depth: 0,
+        children: []
+      }, {
+        type: "hr",
+        depth: 0,
+        children: []
+      }];
+    });
+
+  test("Link")
+    .this(function () {
+      return md("[This is a link](http://www.google.com)");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: [{
+          type: "a",
+          href: "http://www.google.com",
+          children: ["This is a link"]
+        }]
+      }];
+    });
+
+  test("Code")
+    .this(function () {
+      return md("```\nfunction () {}\n```");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "code",
+        depth: 0,
+        children: ["function () {}"]
+      }];
+    });
+
+  test("Incorrectly formatted code")
+    .this(function () {
+      return md("```\nfunction () {}\n");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: ["```"]
+      }, {
+        type: "p",
+        depth: 0,
+        children: ["function () {}"]
       }];
     });
 

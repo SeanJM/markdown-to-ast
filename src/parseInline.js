@@ -1,7 +1,24 @@
-const parseInlineStyle = require("./parseInlineStyle");
 const INLINE_SPECIAL = ["*", "**", "~~", "__", "_"];
 
-module.exports = function parseInline(opts) {
+const MATCH_LINK = require("./constants").MATCH_LINK;
+const MATCH_STRIKETHROUGH = require("./constants").MATCH_STRIKETHROUGH;
+const MATCH_EMPHASIS = require("./constants").MATCH_EMPHASIS;
+const MATCH_STRONG = require("./constants").MATCH_STRONG;
+
+function parseAnchor(str) {
+  const match = str.match(MATCH_LINK);
+  return {
+    type: "a",
+    href: match[2],
+    children: parseInline({
+      index: 0,
+      str: match[1],
+      length: match[1].length,
+    })
+  };
+}
+
+function parseInline(opts) {
   let o = {
     str: opts.str,
     length: opts.length,
@@ -10,17 +27,23 @@ module.exports = function parseInline(opts) {
   };
 
   let n = 0;
-
-  while (o.str[o.index] === "#") {
-    o.index += 1;
-  }
-
-  while (o.str[o.index] === "-") {
-    o.index += 1;
-  }
+  let s;
 
   if (/^(\s+|)[0-9]+\./.test(o.str)) {
+    // Ordered list
     o.index += o.str.match(/^(\s+|)[0-9]+\./)[0].length;
+  } else if (/^(\s+|)([-]{3}|[_]{3}|[*]{3})/.test(o.str)) {
+    // Horizontal rule
+    o.index += o.str.match(/^(\s+|)([-]{3}|[_]{3}|[*]{3})/)[0].length;
+  }
+
+  if (
+    o.str[o.index] === "#" ||
+    o.str[o.index] === "-" ||
+    o.str[o.index] === "*" ||
+    o.str[o.index] === "+" ||
+    o.str[o.index] === ">") {
+    o.index += 1;
   }
 
   while ([" "].indexOf(o.str[o.index]) > -1) {
@@ -28,34 +51,32 @@ module.exports = function parseInline(opts) {
   }
 
   while (o.index < o.length) {
-    if (INLINE_SPECIAL.indexOf(o.str.slice(o.index, o.index + 2)) > -1) {
-      o.children.push(
-        parseInlineStyle(
-          Object.assign({}, o),
-          o.str.slice(o.index, o.index + 2)
-        )
-      );
+    s = o.str.slice(o.index);
+    if (MATCH_STRONG.test(s)) {
+      o.children.push(mixInlineStyles({
+        type: "strong",
+        children: [ s.match(MATCH_STRONG)[1] ]
+      }));
 
-      o.index = (
-        o.str.indexOf(
-          INLINE_SPECIAL[INLINE_SPECIAL.indexOf(o.str.slice(o.index, o.index + 2))],
-          o.index + 2
-        ) + 1
-      );
-    } else if (INLINE_SPECIAL.indexOf(o.str.slice(o.index, o.index + 1)) > -1) {
-      o.children.push(
-        parseInlineStyle(
-          Object.assign({}, o),
-          o.str.slice(o.index, o.index + 1)
-        )
-      );
+      o.index += s.match(MATCH_STRONG)[0].length - 1;
+    } else if (MATCH_STRIKETHROUGH.test(s)) {
+      o.children.push(mixInlineStyles({
+        type: "strikethrough",
+        children: [ s.match(MATCH_STRIKETHROUGH)[1] ]
+      }));
 
-      o.index = (
-        o.str.indexOf(
-          INLINE_SPECIAL[INLINE_SPECIAL.indexOf(o.str.slice(o.index, o.index + 1))],
-          o.index + 2
-        )
-      );
+      o.index += s.match(MATCH_STRIKETHROUGH)[0].length - 1;
+    } else if (MATCH_EMPHASIS.test(s)) {
+      o.children.push(mixInlineStyles({
+        type: "emphasis",
+        children: [ s.match(MATCH_EMPHASIS)[1] ]
+      }));
+
+      o.index += s.match(MATCH_EMPHASIS)[0].length - 1;
+    } else if (MATCH_LINK.test(s)) {
+      // Links
+      o.children.push(parseAnchor(s));
+      o.index += o.str.match(MATCH_LINK)[0].length;
     } else {
       if (typeof o.children[n] === "object") {
         o.children.push("");
@@ -78,4 +99,17 @@ module.exports = function parseInline(opts) {
   }
 
   return o.children;
-};
+}
+
+function mixInlineStyles(props) {
+  return {
+    type: props.type,
+    children: parseInline({
+      index: 0,
+      str: props.children[0],
+      length: props.children[0].length,
+    })
+  };
+}
+
+module.exports = parseInline;
