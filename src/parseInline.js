@@ -76,7 +76,7 @@ function parseInline(opts) {
     } else if (MATCH_LINK.test(s)) {
       // Links
       o.children.push(parseAnchor(s));
-      o.index += s.match(MATCH_LINK)[0].length;
+      o.index += s.match(MATCH_LINK)[0].length - 1;
     } else {
       if (typeof o.children[n] === "object") {
         o.children.push("");

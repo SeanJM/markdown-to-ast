@@ -410,6 +410,22 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("Link with text")
+    .this(function () {
+      return md("I think this [is a link](http://www.google.com) to google");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: ["I think this ", {
+          type: "a",
+          href: "http://www.google.com",
+          children: ["is a link"]
+        }, " to google"]
+      }];
+    });
+
   test("Code")
     .this(function () {
       return md("```\nfunction () {}\n```");
