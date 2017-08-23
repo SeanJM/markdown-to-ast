@@ -28,6 +28,10 @@
 \[A link](http://www.google.com)
 ```{type: "a", href: "http://www.google.com", children: ["A link"]}```
 
+\![A picture](http://www.cats.com/pictures/cat00001.jpg)
+```{type: "img", src: "http://www.cats.com/pictures/cat00001.jpg", alt: "A picture"}```
+
+
 ### Block
 \> Block quote
 ```{type: "quote", children: ["Block quote"]}```
