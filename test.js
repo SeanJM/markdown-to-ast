@@ -454,5 +454,21 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("Picture")
+    .this(function () {
+      return md("![some alt text](http://www.google.com/picture.jpeg)");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: [{
+          type: "img",
+          src: "http://www.google.com/picture.jpeg",
+          alt: "some alt text"
+        }]
+      }];
+    });
+
   load();
 });

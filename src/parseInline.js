@@ -1,6 +1,7 @@
 const INLINE_SPECIAL = ["*", "**", "~~", "__", "_"];
 
 const MATCH_LINK = require("./constants").MATCH_LINK;
+const MATCH_PICTURE = require("./constants").MATCH_PICTURE;
 const MATCH_STRIKETHROUGH = require("./constants").MATCH_STRIKETHROUGH;
 const MATCH_EMPHASIS = require("./constants").MATCH_EMPHASIS;
 const MATCH_STRONG = require("./constants").MATCH_STRONG;
@@ -15,6 +16,15 @@ function parseAnchor(str) {
       str: match[1],
       length: match[1].length,
     })
+  };
+}
+
+function parsePicture(str) {
+  const match = str.match(MATCH_PICTURE);
+  return {
+    type: "img",
+    src: match[2],
+    alt: match[1]
   };
 }
 
@@ -73,6 +83,9 @@ function parseInline(opts) {
       }));
 
       o.index += s.match(MATCH_EMPHASIS)[0].length - 1;
+    } else if (MATCH_PICTURE.test(s)) {
+      o.children.push(parsePicture(s));
+      o.index += s.match(MATCH_PICTURE)[0].length - 1;
     } else if (MATCH_LINK.test(s)) {
       // Links
       o.children.push(parseAnchor(s));
