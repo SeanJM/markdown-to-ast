@@ -54,7 +54,3 @@ Paragraph text
 \2. Ordered list items
 \3. Ordered list items
 ```{type: "ol", children: [{type: "li", children: ["Ordered list items"]}...]}```
-
-# Notes
-- Nesting block elements inside lists elements is not yet supported.
-- Nesting block elements inside block quotes is not yet supported.
