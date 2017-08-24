@@ -11,19 +11,25 @@ function getDepth(str) {
 
 module.exports = function parseBlock(str) {
   const lines = str
-    .split("\n")
-    .filter(a => a.length);
+    .split("\n");
 
   for (let i = 0, n = lines.length; i < n; i++) {
-    lines[i] = {
-      type: getBlockType(lines[i]),
-      depth: getDepth(lines[i]),
-      children: parseInline({
-        str: lines[i].trim(),
-        index: 0,
-        length: lines[i].trim().length
-      })
-    };
+    if (lines[i].trim().length) {
+      lines[i] = {
+        type: getBlockType(lines[i]),
+        depth: getDepth(lines[i]),
+        children: parseInline({
+          str: lines[i].trim(),
+          index: 0,
+          length: lines[i].trim().length
+        })
+      };
+    } else {
+      lines[i] = {
+        type: "newline",
+        depth: 0
+      };
+    }
   }
 
   return processLines(lines);

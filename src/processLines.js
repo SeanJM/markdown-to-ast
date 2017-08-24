@@ -1,33 +1,42 @@
-function processList(type, lines) {
+function processList(lines) {
   let merge = [];
   let i = 0;
   let depth = lines[0].depth;
+  let n = lines.length;
 
   let element = {
-    type: type,
+    type: lines[0].type === "ol li"
+      ? "ol"
+      : "ul",
     depth: depth,
     children: []
   };
 
-  while (i < lines.length) {
+  while (i < n) {
     while (lines[i] && lines[i].depth > depth) {
       merge.push({
-        type: "li",
+        type: lines[i].type,
         children: lines[i].children,
         depth: lines[i].depth + 1
       });
-
       i += 1;
     }
 
     if (merge.length) {
       i--;
       element.children.slice(-1)[0].children.push(
-        processList(type, merge)
+        processList(merge)
       );
-    } else {
+    } else if (lines[i].type === "ul li" || lines[i].type === "ol li") {
       element.children.push({
         type: "li",
+        children: lines[i].children,
+        depth: lines[i].depth + 1
+      });
+    } else {
+      // Append the child to the last list element
+      element.children.slice(-1)[0].children.push({
+        type: lines[i].type,
         children: lines[i].children,
         depth: lines[i].depth + 1
       });
@@ -54,121 +63,74 @@ function processQuote(collected) {
   };
 }
 
-function processCode(lines) {
-  const children = [];
+function groupByBlock(lines) {
+  const containing_blocks = [ "quote", "ul li", "ol li" ];
+  const groups = [];
+  const group = {};
 
-  for (var i = 1, n = lines.length - 1; i < n; i++) {
-    [].push.apply(children, lines[i].children);
-  }
-
-  return {
-    type: "code",
-    depth: lines[0].depth,
-    children: children
-  };
-}
-
-function groupByType(props) {
-  let collected = [];
   let i = 0;
+  let n = lines.length;
+  let t;
 
-  while (props.lines[i] && props.lines[i].type !== props.type) {
+  while (i < n) {
+    if (containing_blocks.indexOf(lines[i].type) > -1) {
+      group.type = lines[i].type;
+      group.children = [];
+
+      while (i < n && lines[i].type !== "newline") {
+        group.children.push(lines[i]);
+        i += 1;
+      }
+
+      groups.push(group);
+    } else if (lines[i].type === "code") {
+      t = i;
+      i += 1;
+
+      while (i < n && lines[i].type !== "code") {
+        i += 1;
+      }
+
+      if (lines[i] && lines[i].type === "code") {
+        groups.push({
+          type: "code",
+          depth: lines[i].depth,
+          children: [].concat.apply([],
+            lines
+              .slice(t + 1, i)
+              .map(function (child) {
+                return child.children;
+              })
+          )
+        });
+      } else {
+        lines[t].type = "p";
+        groups.push(lines[t]);
+        i = t;
+      }
+    } else {
+      groups.push(lines[i]);
+    }
+
     i += 1;
   }
 
-  while(props.lines[i] && props.lines[i].type === props.type) {
-    collected.push(props.lines[i]);
-    i += 1;
-  }
-
-  if (collected.length) {
-    props.callback(
-      collected,
-      props.lines.indexOf(collected[0]),
-      props.lines.indexOf(collected.slice(-1)[0])
-    );
-  }
-}
-
-function groupCode(props) {
-  let i = 0;
-  let start;
-  let end;
-
-  while (props.lines[i] && props.lines[i].type !== "code") {
-    i += 1;
-  }
-
-  if (props.lines[i] && props.lines[i].type === "code") {
-    start = i;
-    i += 1;
-  }
-
-  while (props.lines[i] && props.lines[i].type !== "code") {
-    i += 1;
-  }
-
-  if (i !== start && props.lines[i] && props.lines[i].type === "code") {
-    end = i;
-  }
-
-  if (typeof start !== "undefined" && typeof end !== "undefined" ) {
-    props.callback(props.lines.slice(start, end + 1), start, end);
-  } else if (typeof start !== "undefined") {
-    props.error(props.lines[start]);
-  }
+  return groups;
 }
 
 module.exports = function processLines(lines) {
-  groupByType({
-    type: "ul li",
-    lines: lines,
-    callback: function (collected, start, end) {
-      lines.splice(
-        start,
-        (end - start) + 1,
-        processList(collected[0].type.split(" ")[0], collected)
-      );
-    },
-  });
+  const groups = groupByBlock(lines);
+  let filtered = [];
 
-  groupByType({
-    type: "ol li",
-    lines: lines,
-    callback: function (collected, start, end) {
-      lines.splice(
-        start,
-        (end - start) + 1,
-        processList(collected[0].type.split(" ")[0], collected)
-      );
-    },
-  });
-
-  groupByType({
-    type: "quote",
-    lines: lines,
-    callback: function (collected, start, end) {
-      lines.splice(
-        start,
-        (end - start) + 1,
-        processQuote(collected)
-      );
-    },
-  });
-
-  groupCode({
-    lines: lines,
-    callback: function (collected, start, end) {
-      lines.splice(
-        start,
-        (end - start) + 1,
-        processCode(collected)
-      );
-    },
-    error: function (element) {
-      element.type = "p";
+  for (var i = 0, n = groups.length; i < n; i++) {
+    if (groups[i].type === "ul li" || groups[i].type === "ol li") {
+      filtered.push(processList(groups[i].children));
+    } else if (groups[i].type === "quote") {
+      filtered.push(processQuote(groups[i].children));
+    } else if (groups[i].type !== "newline") {
+      filtered.push(groups[i]);
     }
-  });
+  }
 
-  return lines;
+  return filtered;
 };

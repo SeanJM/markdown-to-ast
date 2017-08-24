@@ -470,5 +470,49 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("List with paragraph child")
+    .this(function () {
+      return md("- This is a list item\nWith a paragraph child");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "ul",
+        depth: 0,
+        children: [{
+          type: "li",
+          depth: 1,
+          children: ["This is a list item", {
+            type: "p",
+            depth: 1,
+            children: ["With a paragraph child"]
+          }]
+        }]
+      }];
+    });
+
+  test("List with paragraph child (complex)")
+    .this(function () {
+      return md("- This is a list item\nWith a paragraph child\n- This is another list item");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "ul",
+        depth: 0,
+        children: [{
+          type: "li",
+          depth: 1,
+          children: ["This is a list item", {
+            type: "p",
+            depth: 1,
+            children: ["With a paragraph child"]
+          }]
+        }, {
+          type: "li",
+          depth: 1,
+          children: ["This is another list item"]
+        }]
+      }];
+    });
+
   load();
 });
