@@ -45,10 +45,12 @@ function parseInline(opts) {
   } else if (/^(\s+|)([-]{3}|[_]{3}|[*]{3})/.test(o.str)) {
     // Horizontal rule
     o.index += o.str.match(/^(\s+|)([-]{3}|[_]{3}|[*]{3})/)[0].length;
+  } else if (/^(\s+|)([#]+)/.test(o.str)) {
+    // Headings
+    o.index += o.str.match(/^(?:\s+|)([#]+)/)[1].length;
   }
 
   if (
-    o.str[o.index] === "#" ||
     o.str[o.index] === "-" ||
     o.str[o.index] === "*" ||
     o.str[o.index] === "+" ||

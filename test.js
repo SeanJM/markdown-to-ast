@@ -14,6 +14,18 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("H2")
+    .this(function () {
+      return md("## Heading");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "h2",
+        depth: 0,
+        children: [ "Heading" ]
+      }];
+    });
+
   test("heading and paragraph")
     .this(function () {
       return md("# Heading 1\nAnd some text");
