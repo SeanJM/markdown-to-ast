@@ -1,5 +1,5 @@
 const tinytest = require("tiny-test");
-const md = require("./index.js");
+const md = require("./src/index.js");
 
 tinytest(function (test, load) {
   test("basic")
@@ -367,7 +367,11 @@ tinytest(function (test, load) {
       return [{
         type: "quote",
         depth: 0,
-        children: ["This is a block quote"]
+        children: [{
+          type: "p",
+          depth: 0,
+          children: ["This is a block quote"]
+        }]
       }];
     });
 
@@ -379,10 +383,15 @@ tinytest(function (test, load) {
       return [{
         type: "quote",
         depth: 0,
-        children: [
-          "This is a block quote",
-          "This line is part of the original quote"
-        ]
+        children: [{
+          type: "p",
+          depth: 0,
+          children: ["This is a block quote"]
+        }, {
+          type: "p",
+          depth: 0,
+          children: ["This line is part of the original quote"]
+        }]
       }];
     });
 
@@ -552,7 +561,33 @@ tinytest(function (test, load) {
       }, {
         type: "quote",
         depth: 0,
-        children: ["ET is awesome"]
+        children: [{ type: "p", depth: 0, children: ["ET is awesome"]}]
+      }];
+    });
+
+  test("Nested quotes")
+    .this(function () {
+      const str = "> ET is awesome\n> > This quote is nested";
+      const markdown = md(str);
+      return markdown;
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "quote",
+        depth: 0,
+        children: [{
+          type: "p",
+          depth: 0,
+          children: ["ET is awesome"]
+        }, {
+          type: "quote",
+          depth: 0,
+          children: [{
+            type: "p",
+            depth: 0,
+            children: ["This quote is nested"]
+          }]
+        }]
       }];
     });
 

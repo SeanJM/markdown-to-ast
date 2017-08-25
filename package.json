@@ -4,13 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "dev": "NODE_ENV='development' webpack --watch",
+    "build": "NODE_ENV='production' webpack"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
     "eslint": "^4.5.0",
-    "tiny-test": "^0.9.2"
-  }
+    "tiny-test": "^0.9.2",
+    "webpack": "^3.5.5"
+  },
+  "dependencies": {}
 }
