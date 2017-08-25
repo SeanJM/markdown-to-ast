@@ -66,13 +66,14 @@ function processQuote(collected) {
 function groupByBlock(lines) {
   const containing_blocks = [ "quote", "ul li", "ol li" ];
   const groups = [];
-  const group = {};
+  let group;
 
   let i = 0;
   let n = lines.length;
   let t;
 
   while (i < n) {
+    group = {};
     if (containing_blocks.indexOf(lines[i].type) > -1) {
       group.type = lines[i].type;
       group.children = [];

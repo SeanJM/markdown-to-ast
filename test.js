@@ -526,5 +526,35 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("Multiple elements mixed together")
+    .this(function () {
+      const str = "- He's friendly\n- His heart glows\n- He purs like a kitty\n\n> ET is awesome";
+      const markdown = md(str);
+      return markdown;
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "ul",
+        depth: 0,
+        children: [{
+          type: "li",
+          depth: 1,
+          children: ["He's friendly"]
+        }, {
+          type: "li",
+          depth: 1,
+          children: ["His heart glows"]
+        }, {
+          type: "li",
+          depth: 1,
+          children: ["He purs like a kitty"]
+        }]
+      }, {
+        type: "quote",
+        depth: 0,
+        children: ["ET is awesome"]
+      }];
+    });
+
   load();
 });
