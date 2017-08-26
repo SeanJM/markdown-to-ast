@@ -7,7 +7,7 @@ module.exports = function getBlockType(str) {
     return "quote";
   } else if (/^(\s+|)#/.test(str)) {
     return "h" + Math.min(6, str.match(/^(?:\s+|)([#]+)/)[0].length);
-  } else if (/^(\s+|)(-|\*|\+)/.test(str)) {
+  } else if (/^(\s+|)(-|\*|\+)\s/.test(str)) {
     return "ul li";
   } else if (/^(\s+|)[0-9]/.test(str)) {
     return "ol li";

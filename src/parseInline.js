@@ -48,12 +48,12 @@ function parseInline(opts) {
   } else if (/^(\s+|)([#]+)/.test(o.str)) {
     // Headings
     o.index += o.str.match(/^(?:\s+|)([#]+)/)[1].length;
+  } else if (/^(\s+|)(\*|-|\+)\s/.test(o.str)) {
+    // List items
+    o.index += o.str.match(/(\s+|)(\*|-|\+)\s/)[0].length;
   }
 
   if (
-    o.str[o.index] === "-" ||
-    o.str[o.index] === "*" ||
-    o.str[o.index] === "+" ||
     o.str[o.index] === ">") {
     o.index += 1;
   }

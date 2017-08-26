@@ -591,5 +591,28 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("Inline style siblings")
+    .this(function () {
+      const str = "**A** ~~B~~ *C*";
+      const markdown = md(str);
+      return markdown;
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: [{
+          type: "strong",
+          children: ["A"]
+        }, " ", {
+          type: "strikethrough",
+          children: ["B"]
+        }, " ", {
+          type: "emphasis",
+          children: ["C"]
+        }]
+      }];
+    });
+
   load();
 });
