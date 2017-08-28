@@ -1,6 +1,7 @@
 const getBlockType = require("./getBlockType");
 const parseInline = require("./parseInline");
 const groupByBlock = require("./groupByBlock");
+const MATCH_REFERENCE = require("./constants").MATCH_REFERENCE;
 
 function getLineDepth(str) {
   let depth = str.match(/^([ ]+)/m);
@@ -9,21 +10,14 @@ function getLineDepth(str) {
     : 0;
 }
 
-function processLines(lines) {
-  const groups = groupByBlock(lines);
-  let filtered = [];
-
-  for (var i = 0, n = groups.length; i < n; i++) {
-    if (groups[i].type === "ul li" || groups[i].type === "ol li") {
-      filtered.push(processList(groups[i].children));
-    } else if (groups[i].type === "quote") {
-      filtered.push(processQuote(groups[i].children));
-    } else if (groups[i].type !== "newline") {
-      filtered.push(groups[i]);
-    }
-  }
-
-  return filtered;
+function processReference(node) {
+  const m = node.children[0].match(MATCH_REFERENCE);
+  return {
+    type: node.type,
+    depth: node.depth,
+    href: m[2],
+    link: m[1].toLowerCase()
+  };
 }
 
 function processQuote(collected) {
@@ -89,6 +83,25 @@ function processList(lines) {
   }
 
   return element;
+}
+
+function processLines(lines) {
+  const groups = groupByBlock(lines);
+  let filtered = [];
+
+  for (var i = 0, n = groups.length; i < n; i++) {
+    if (groups[i].type === "ul li" || groups[i].type === "ol li") {
+      filtered.push(processList(groups[i].children));
+    } else if (groups[i].type === "quote") {
+      filtered.push(processQuote(groups[i].children));
+    } else if (groups[i].type === "r") {
+      filtered.push(processReference(groups[i]));
+    } else if (groups[i].type !== "newline") {
+      filtered.push(groups[i]);
+    }
+  }
+
+  return filtered;
 }
 
 function parseBlock(lines) {

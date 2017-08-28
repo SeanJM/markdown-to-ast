@@ -614,5 +614,38 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("Reference style link")
+    .this(function () {
+      const str = "[I'm a reference-style link][Arbitrary case-insensitive reference text]";
+      const markdown = md(str);
+      return markdown;
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: [{
+          type: "rlink",
+          href: "arbitrary case-insensitive reference text",
+          children: ["I'm a reference-style link"]
+        }]
+      }];
+    });
+
+  test("Reference text")
+    .this(function () {
+      const str = "[arbitrary case-insensitive reference text]: https://www.mozilla.org";
+      const markdown = md(str);
+      return markdown;
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "r",
+        depth: 0,
+        link: "arbitrary case-insensitive reference text",
+        href: "https://www.mozilla.org"
+      }];
+    });
+
   load();
 });

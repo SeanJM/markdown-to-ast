@@ -1,9 +1,10 @@
 const INLINE_SPECIAL = ["*", "**", "~~", "__", "_"];
 
+const MATCH_EMPHASIS = require("./constants").MATCH_EMPHASIS;
 const MATCH_LINK = require("./constants").MATCH_LINK;
 const MATCH_PICTURE = require("./constants").MATCH_PICTURE;
+const MATCH_RLINK = require("./constants").MATCH_RLINK;
 const MATCH_STRIKETHROUGH = require("./constants").MATCH_STRIKETHROUGH;
-const MATCH_EMPHASIS = require("./constants").MATCH_EMPHASIS;
 const MATCH_STRONG = require("./constants").MATCH_STRONG;
 
 function parseAnchor(str) {
@@ -11,6 +12,19 @@ function parseAnchor(str) {
   return {
     type: "a",
     href: match[2],
+    children: parseInline({
+      index: 0,
+      str: match[1],
+      length: match[1].length,
+    })
+  };
+}
+
+function parseReference(str) {
+  const match = str.match(MATCH_RLINK);
+  return {
+    type: "rlink",
+    href: match[2].toLowerCase(),
     children: parseInline({
       index: 0,
       str: match[1],
@@ -92,6 +106,10 @@ function parseInline(opts) {
       // Links
       o.children.push(parseAnchor(s));
       o.index += s.match(MATCH_LINK)[0].length - 1;
+    } else if (MATCH_RLINK.test(s)) {
+      // References
+      o.children.push(parseReference(s));
+      o.index += s.match(MATCH_RLINK)[0].length - 1;
     } else {
       if (typeof o.children[n] === "object") {
         o.children.push("");

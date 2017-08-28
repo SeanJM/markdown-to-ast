@@ -1,3 +1,5 @@
+const MATCH_REFERENCE = require("./constants").MATCH_REFERENCE;
+
 module.exports = function getBlockType(str) {
   if (/^(\s+|)```/.test(str)) {
     return "code";
@@ -11,6 +13,8 @@ module.exports = function getBlockType(str) {
     return "ul li";
   } else if (/^(\s+|)[0-9]/.test(str)) {
     return "ol li";
+  } else if (MATCH_REFERENCE.test(str)) {
+    return "r";
   } else {
     return "p";
   }

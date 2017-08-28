@@ -48,15 +48,6 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
-\[A link](http://www.google.com)
-```
-  {
-    type: "a",
-    href: "http://www.google.com",
-    children: ["A link"]
-  }
-```
-
 \![A picture](http://www.cats.com/pictures/cat00001.jpg)
 ```
   {
@@ -66,6 +57,35 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+### Links
+
+\[A link](http://www.google.com)
+```
+  {
+    type: "a",
+    href: "http://www.google.com",
+    children: ["A link"]
+  }
+```
+
+\[Reference style link][1]
+```
+  {
+    type: "rlink",
+    href: "1",
+    children: ["A reference style link"]
+  }
+```
+
+\[arbitrary case-insensitive reference text]: https://www.mozilla.org
+```
+  {
+    type: 'r',
+    depth: 0,
+    href: 'https://www.mozilla.org',
+    link: 'arbitrary case-insensitive reference text'
+  }
+```
 
 ### Block
 
