@@ -1,7 +1,8 @@
 const MATCH_REFERENCE = require("./constants").MATCH_REFERENCE;
+const MATCH_CODE = require("./constants").MATCH_CODE;
 
 module.exports = function getBlockType(str) {
-  if (/^(\s+|)```/.test(str)) {
+  if (MATCH_CODE.test(str)) {
     return "code";
   } else if (/^(\s+|)([-]{3}|[*]{3}|[_]{3})/.test(str)) {
     return "hr";

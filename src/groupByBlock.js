@@ -1,3 +1,10 @@
+const MATCH_CODE = require("./constants").MATCH_CODE;
+
+function getLanguage(s) {
+  const m = s.match(MATCH_CODE)[1];
+  return m ? m : false;
+}
+
 module.exports = function groupByBlock(lines) {
   const containing_blocks = [ "quote", "ul li", "ol li" ];
   const groups = [];
@@ -31,6 +38,7 @@ module.exports = function groupByBlock(lines) {
         groups.push({
           type: "code",
           depth: lines[i].depth,
+          language: getLanguage(lines[t].children[0]),
           children: [].concat.apply([],
             lines
               .slice(t + 1, i)

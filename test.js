@@ -454,6 +454,20 @@ tinytest(function (test, load) {
     .isDeepEqual(function () {
       return [{
         type: "code",
+        language: false,
+        depth: 0,
+        children: ["function () {}"]
+      }];
+    });
+
+  test("Code (Javascript)")
+    .this(function () {
+      return md("```javascript\nfunction () {}\n```");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "code",
+        language: "javascript",
         depth: 0,
         children: ["function () {}"]
       }];

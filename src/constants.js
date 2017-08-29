@@ -5,8 +5,10 @@ const MATCH_REFERENCE = /^(?:\s+|)\[([^\]]+)\]: ((?:http(?:s|):\/\/|)[a-zA-Z0-9%
 const MATCH_PICTURE = /^!\[([^\]]+)\]\(([^\]]+)\)/;
 const MATCH_STRIKETHROUGH = /^~~([^\]]+?)~~/;
 const MATCH_STRONG = /^\*\*([^\]]+?)\*\*/;
+const MATCH_CODE = /^(?:\s+|)```([a-zA-Z]+|)/;
 
 module.exports = {
+  MATCH_CODE,
   MATCH_EMPHASIS,
   MATCH_LINK,
   MATCH_PICTURE,
