@@ -176,11 +176,11 @@ Maximum heading size is `6`
 ```
 
 #### Ordered list
-\1. Ordered list items
+1. Ordered list items
 
-\2. Ordered list items
+2. Ordered list items
 
-\3. Ordered list items
+3. Ordered list items
 
 ```
   {
