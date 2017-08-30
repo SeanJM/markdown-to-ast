@@ -6,10 +6,12 @@ const MATCH_PICTURE = /^!\[([^\]]+)\]\(([^\]]+)\)/;
 const MATCH_STRIKETHROUGH = /^~~([^\]]+?)~~/;
 const MATCH_STRONG = /^\*\*([^\]]+?)\*\*/;
 const MATCH_CODE = /^(?:\s+|)```([a-zA-Z]+|)/;
+const MATCH_INLINE_CODE = /^`([^`]+)`/;
 
 module.exports = {
   MATCH_CODE,
   MATCH_EMPHASIS,
+  MATCH_INLINE_CODE,
   MATCH_LINK,
   MATCH_PICTURE,
   MATCH_REFERENCE,

@@ -57,6 +57,14 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+\`var inline_code`
+```
+  {
+    type: "inline-code",
+    children: ["var inline_code"]
+  }
+```
+
 ### Links
 
 \[A link](http://www.google.com)

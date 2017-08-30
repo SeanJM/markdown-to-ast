@@ -94,7 +94,7 @@ function processLines(lines) {
       filtered.push(processList(groups[i].children));
     } else if (groups[i].type === "quote") {
       filtered.push(processQuote(groups[i].children));
-    } else if (groups[i].type === "r") {
+    } else if (groups[i].type === "ref") {
       filtered.push(processReference(groups[i]));
     } else if (groups[i].type !== "newline") {
       filtered.push(groups[i]);

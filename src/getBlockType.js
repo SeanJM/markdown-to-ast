@@ -15,7 +15,7 @@ module.exports = function getBlockType(str) {
   } else if (/^(\s+|)[0-9]/.test(str)) {
     return "ol li";
   } else if (MATCH_REFERENCE.test(str)) {
-    return "r";
+    return "ref";
   } else {
     return "p";
   }

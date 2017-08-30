@@ -654,10 +654,24 @@ tinytest(function (test, load) {
     })
     .isDeepEqual(function () {
       return [{
-        type: "r",
+        type: "ref",
         depth: 0,
         link: "arbitrary case-insensitive reference text",
         href: "https://www.mozilla.org"
+      }];
+    });
+
+  test("Inline code")
+    .this(function () {
+      const str = "This should have `inline` code";
+      const markdown = md(str);
+      return markdown;
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: ["This should have ", { type: "inline-code", children: ["inline"] }, " code"],
       }];
     });
 

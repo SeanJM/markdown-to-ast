@@ -6,6 +6,7 @@ const MATCH_PICTURE = require("./constants").MATCH_PICTURE;
 const MATCH_RLINK = require("./constants").MATCH_RLINK;
 const MATCH_STRIKETHROUGH = require("./constants").MATCH_STRIKETHROUGH;
 const MATCH_STRONG = require("./constants").MATCH_STRONG;
+const MATCH_INLINE_CODE = require("./constants").MATCH_INLINE_CODE;
 
 function parseAnchor(str) {
   const match = str.match(MATCH_LINK);
@@ -110,6 +111,13 @@ function parseInline(opts) {
       // References
       o.children.push(parseReference(s));
       o.index += s.match(MATCH_RLINK)[0].length - 1;
+    } else if (MATCH_INLINE_CODE.test(s)) {
+      // Code
+      o.children.push({
+        type: "inline-code",
+        children: [ s.match(MATCH_INLINE_CODE)[1] ]
+      });
+      o.index += s.match(MATCH_INLINE_CODE)[0].length - 1;
     } else {
       if (typeof o.children[n] === "object") {
         o.children.push("");
