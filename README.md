@@ -1,5 +1,5 @@
 # File size
-## 5.79kb 
+## 5.79kb
 
 # Installation
 ```
@@ -24,6 +24,8 @@ $ npm i -D markdown-simple-ast
 
 # Node types
 ### Inline
+
+#### Strong
 \*\*Strong\*\*
 ```
   {
@@ -32,6 +34,7 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+#### Emphasis (Italics)
 \*Emphasis\*
 ```
   {
@@ -40,6 +43,7 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+#### Strikethrough (del)
 \~\~Strikethrough\~\~
 ```
   {
@@ -48,6 +52,7 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+#### Image
 \!\[A picture](http://www.cats.com/pictures/cat00001.jpg)
 ```
   {
@@ -57,6 +62,7 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+#### Inline code
 \`var inline_code`
 ```
   {
@@ -67,6 +73,7 @@ $ npm i -D markdown-simple-ast
 
 ### Links
 
+#### Link
 \[A link](http://www.google.com)
 ```
   {
@@ -76,6 +83,7 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+#### Reference style link
 \[Reference style link][1]
 ```
   {
@@ -85,10 +93,11 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+#### Reference
 \[arbitrary case-insensitive reference text]: https://www.mozilla.org
 ```
   {
-    type: 'r',
+    type: 'ref',
     depth: 0,
     href: 'https://www.mozilla.org',
     link: 'arbitrary case-insensitive reference text'
@@ -99,6 +108,7 @@ $ npm i -D markdown-simple-ast
 
 - `depth` is relative depth to the block parent
 
+#### Block quote
 \> Block quote
 ```
   {
@@ -112,6 +122,7 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+#### Horizontal rule
 \_\_\_ or \*\*\* or \-\-\-
 ```
   {
@@ -121,6 +132,7 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
+#### Paragraph text
 Paragraph text
 ```
   {
@@ -130,6 +142,7 @@ Paragraph text
   }
 ```
 
+#### Heading
 \# Heading
 
 Maximum heading size is `6`
@@ -142,9 +155,13 @@ Maximum heading size is `6`
   }
 ```
 
+#### Unordered list
 \- List items
+
 \- List items
+
 \- List items
+
 ```
   {
     type: "ul",
@@ -158,9 +175,13 @@ Maximum heading size is `6`
   }
 ```
 
+#### Ordered list
 \1. Ordered list items
+
 \2. Ordered list items
+
 \3. Ordered list items
+
 ```
   {
     type: "ol",
