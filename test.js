@@ -104,7 +104,9 @@ tinytest(function (test, load) {
 
   test("Emphasis (Incorrect)")
     .this(function () {
-      return md("A *line");
+      let markdown = md("A *line");
+      console.log(markdown);
+      return markdown;
     })
     .isDeepEqual(function () {
       return [{
@@ -187,6 +189,29 @@ tinytest(function (test, load) {
             }]
           },
           " text line"
+        ]
+      }];
+    });
+
+  test("mixed emphasis (2)")
+    .this(function () {
+      const str = "The really ***good*** thing";
+      const markdown = md(str);
+      return markdown;
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "p",
+        depth: 0,
+        children: [
+          "The really ", {
+            type: "emphasis",
+            children: [{
+              type: "strong",
+              children: ["good"]
+            }]
+          },
+          " thing"
         ]
       }];
     });

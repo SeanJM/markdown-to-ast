@@ -1,11 +1,9 @@
 const INLINE_SPECIAL = ["*", "**", "~~", "__", "_"];
 
-const MATCH_EMPHASIS = require("./constants").MATCH_EMPHASIS;
 const MATCH_LINK = require("./constants").MATCH_LINK;
 const MATCH_PICTURE = require("./constants").MATCH_PICTURE;
 const MATCH_RLINK = require("./constants").MATCH_RLINK;
 const MATCH_STRIKETHROUGH = require("./constants").MATCH_STRIKETHROUGH;
-const MATCH_STRONG = require("./constants").MATCH_STRONG;
 const MATCH_INLINE_CODE = require("./constants").MATCH_INLINE_CODE;
 
 function parseAnchor(str) {
@@ -43,6 +41,37 @@ function parsePicture(str) {
   };
 }
 
+function parseEmAndStrong(o) {
+  let i = o.index;
+  let end = "";
+  let isValid;
+
+  while (o.str[o.index] === "*") {
+    end += o.str[o.index];
+    o.index += 1;
+  }
+
+  while (o.str[o.index] && !isValid) {
+    o.index += 1;
+    isValid = o.str.substring(o.index, o.index + end.length) === end;
+  }
+
+  o.index += end.length - 1;
+
+  return isValid
+    ? mixInlineStyles(end.length % 2
+      ? {
+        type: "emphasis",
+        children: [o.str.substring(i + 1, o.index)]
+      }
+      : {
+        type: "strong",
+        children: [o.str.substring(i + 2, o.index - 1)]
+      }
+    )
+    : o.str.slice(i);
+}
+
 function parseInline(opts) {
   let o = {
     str: opts.str,
@@ -53,6 +82,7 @@ function parseInline(opts) {
 
   let n = 0;
   let s;
+  let t;
 
   if (/^(\s+|)[0-9]+\./.test(o.str)) {
     // Ordered list
@@ -79,13 +109,22 @@ function parseInline(opts) {
 
   while (o.index < o.length) {
     s = o.str.slice(o.index);
-    if (MATCH_STRONG.test(s)) {
-      o.children.push(mixInlineStyles({
-        type: "strong",
-        children: [ s.match(MATCH_STRONG)[1] ]
-      }));
+    if (s[0] === "*") {
+      o.children.push(
+        parseEmAndStrong(o)
+      );
 
-      o.index += s.match(MATCH_STRONG)[0].length - 1;
+      t = o.children.slice(-2);
+
+      if (typeof t[0] === "string" &&
+          typeof t[1] === "string"
+      ) {
+        o.children.splice(
+          o.children.length - 2,
+          2,
+          t[0] + t[1]
+        );
+      }
     } else if (MATCH_STRIKETHROUGH.test(s)) {
       o.children.push(mixInlineStyles({
         type: "strikethrough",
@@ -93,13 +132,6 @@ function parseInline(opts) {
       }));
 
       o.index += s.match(MATCH_STRIKETHROUGH)[0].length - 1;
-    } else if (MATCH_EMPHASIS.test(s)) {
-      o.children.push(mixInlineStyles({
-        type: "emphasis",
-        children: [ s.match(MATCH_EMPHASIS)[1] ]
-      }));
-
-      o.index += s.match(MATCH_EMPHASIS)[0].length - 1;
     } else if (MATCH_PICTURE.test(s)) {
       o.children.push(parsePicture(s));
       o.index += s.match(MATCH_PICTURE)[0].length - 1;
@@ -126,9 +158,11 @@ function parseInline(opts) {
         o.children[n] = "";
       }
 
-      if (o.str[o.index] === "\\" && INLINE_SPECIAL.indexOf(o.str.slice(o.index + 1, o.index + 3)) > -1) {
+      t = o.str.slice(o.index + 1, o.index + 3);
+
+      if (o.str[o.index] === "\\" && INLINE_SPECIAL.indexOf(t) > -1) {
         // Handle escape
-        o.children[n] += o.str.slice(o.index + 1, o.index + 3);
+        o.children[n] += t;
         o.index += 3;
       } else {
         o.children[n] += o.str[o.index];
