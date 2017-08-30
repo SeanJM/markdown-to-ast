@@ -48,7 +48,7 @@ $ npm i -D markdown-simple-ast
   }
 ```
 
-\![A picture](http://www.cats.com/pictures/cat00001.jpg)
+\!\[A picture](http://www.cats.com/pictures/cat00001.jpg)
 ```
   {
     type: "img",
