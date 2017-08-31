@@ -496,7 +496,7 @@ tinytest(function (test, load) {
         depth: 0,
         children: [
           "  function () {}",
-          "",
+          "\n",
           "  function () {}",
         ]
       }];

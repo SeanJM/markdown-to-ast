@@ -45,7 +45,7 @@ module.exports = function groupByBlock(lines) {
               .map(function (child) {
                 return (
                   child.type === "newline"
-                    ? ""
+                    ? "\n"
                     : child.children
                 );
               })
