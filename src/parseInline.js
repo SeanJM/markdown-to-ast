@@ -73,6 +73,8 @@ function parseEmAndStrong(o) {
 }
 
 function parseInline(opts) {
+  let trimStart = false;
+
   let o = {
     str: opts.str,
     length: opts.length,
@@ -87,15 +89,18 @@ function parseInline(opts) {
   if (/^(\s+|)[0-9]+\./.test(o.str)) {
     // Ordered list
     o.index += o.str.match(/^(\s+|)[0-9]+\./)[0].length;
+    trimStart = true;
   } else if (/^(\s+|)([-]{3}|[_]{3}|[*]{3})/.test(o.str)) {
     // Horizontal rule
     o.index += o.str.match(/^(\s+|)([-]{3}|[_]{3}|[*]{3})/)[0].length;
   } else if (/^(\s+|)([#]+)/.test(o.str)) {
     // Headings
     o.index += o.str.match(/^(?:\s+|)([#]+)/)[1].length;
+    trimStart = true;
   } else if (/^(\s+|)(\*|-|\+)\s/.test(o.str)) {
     // List items
     o.index += o.str.match(/(\s+|)(\*|-|\+)\s/)[0].length;
+    trimStart = true;
   }
 
   if (
@@ -103,8 +108,10 @@ function parseInline(opts) {
     o.index += 1;
   }
 
-  while ([" "].indexOf(o.str[o.index]) > -1) {
-    o.index += 1;
+  if (trimStart) {
+    while ([" "].indexOf(o.str[o.index]) > -1) {
+      o.index += 1;
+    }
   }
 
   while (o.index < o.length) {

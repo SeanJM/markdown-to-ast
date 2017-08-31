@@ -688,7 +688,7 @@ tinytest(function (test, load) {
 
   test("Inline code")
     .this(function () {
-      const str = "This should have `inline` code";
+      const str = "In `package.json` there is a key";
       const markdown = md(str);
       return markdown;
     })
@@ -696,7 +696,7 @@ tinytest(function (test, load) {
       return [{
         type: "p",
         depth: 0,
-        children: ["This should have ", { type: "inline-code", children: ["inline"] }, " code"],
+        children: ["In ", { type: "inline-code", children: ["package.json"] }, " there is a key"],
       }];
     });
 
