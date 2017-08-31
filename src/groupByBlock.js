@@ -43,7 +43,11 @@ module.exports = function groupByBlock(lines) {
             lines
               .slice(t + 1, i)
               .map(function (child) {
-                return child.children;
+                return (
+                  child.type === "newline"
+                    ? ""
+                    : child.children
+                );
               })
           )
         });

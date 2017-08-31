@@ -484,6 +484,24 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("Code (Empty line)")
+    .this(function () {
+      const markdown = md("```\n  function () {}\n\n  function () {}\n```");
+      return markdown;
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "code",
+        language: false,
+        depth: 0,
+        children: [
+          "  function () {}",
+          "",
+          "  function () {}",
+        ]
+      }];
+    });
+
   test("Code (Javascript)")
     .this(function () {
       return md("```javascript\nfunction () {}\n```");
