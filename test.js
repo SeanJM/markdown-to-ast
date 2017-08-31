@@ -105,7 +105,6 @@ tinytest(function (test, load) {
   test("Emphasis (Incorrect)")
     .this(function () {
       let markdown = md("A *line");
-      console.log(markdown);
       return markdown;
     })
     .isDeepEqual(function () {
@@ -474,14 +473,14 @@ tinytest(function (test, load) {
 
   test("Code")
     .this(function () {
-      return md("```\nfunction () {}\n```");
+      return md("```\n  function () {}\n```");
     })
     .isDeepEqual(function () {
       return [{
         type: "code",
         language: false,
         depth: 0,
-        children: ["function () {}"]
+        children: ["  function () {}"]
       }];
     });
 

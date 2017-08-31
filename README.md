@@ -1,5 +1,5 @@
 # File size
-## 5.98kb
+## 6.04kb
 
 # Installation
 ```

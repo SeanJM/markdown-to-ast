@@ -23,8 +23,14 @@ function processReference(node) {
 function processQuote(collected) {
   const children = [];
 
-  for (var i = 0, n = collected.length; i < n; i++) {
+  for (let i = 0, n = collected.length; i < n; i++) {
     [].push.apply(children, collected[i].children);
+  }
+
+  for (let i = 0, n = children.length; i < n; i++) {
+    if (typeof children[i] === "string") {
+      children[i] = children[i].trim();
+    }
   }
 
   return {
@@ -111,9 +117,9 @@ function parseBlock(lines) {
         type: getBlockType(lines[i]),
         depth: getLineDepth(lines[i]),
         children: parseInline({
-          str: lines[i].trim(),
+          str: lines[i],
           index: 0,
-          length: lines[i].trim().length
+          length: lines[i].length
         })
       };
     } else {
