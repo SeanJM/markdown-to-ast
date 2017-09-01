@@ -515,6 +515,19 @@ tinytest(function (test, load) {
       }];
     });
 
+  test("Code (Ignore inline style)")
+    .this(function () {
+      return md("```javascript\n`function` () {}\n```");
+    })
+    .isDeepEqual(function () {
+      return [{
+        type: "code",
+        language: "javascript",
+        depth: 0,
+        children: ["`function` () {}"]
+      }];
+    });
+
   test("Incorrectly formatted code")
     .this(function () {
       return md("```\nfunction () {}\n");

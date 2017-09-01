@@ -111,16 +111,32 @@ function processLines(lines) {
 }
 
 function parseBlock(lines) {
+  let excludeInline = ["code"];
+  let excluded = false;
+  let type = undefined;
+
   for (let i = 0, n = lines.length; i < n; i++) {
     if (lines[i].trim().length) {
+      type = getBlockType(lines[i]);
+
+      if (excluded && type === excluded) {
+        excluded = false;
+      } else if (excludeInline.indexOf(type) > -1) {
+        excluded = type;
+      }
+
       lines[i] = {
-        type: getBlockType(lines[i]),
+        type: type,
         depth: getLineDepth(lines[i]),
-        children: parseInline({
-          str: lines[i],
-          index: 0,
-          length: lines[i].length
-        })
+        children: (
+          excluded
+            ? [ lines[i] ]
+            : parseInline({
+              str: lines[i],
+              index: 0,
+              length: lines[i].length
+            })
+        )
       };
     } else {
       lines[i] = {
